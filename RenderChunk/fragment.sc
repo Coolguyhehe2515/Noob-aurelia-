@@ -33,8 +33,8 @@ void main() {
 
   diffuse.rgb *= v_color0.rgb;
   diffuse.rgb *= texture2D(s_LightMapTexture, v_lightmapUV).rgb;
-  diffuse.rgb = aureliaColorGrade(diffuse.rgb);
   diffuse.rgb = mix(diffuse.rgb, v_fog.rgb, v_fog.a);
+  diffuse.rgb = aureliaColorGrade(diffuse.rgb);
 
   gl_FragColor = diffuse;
 }
