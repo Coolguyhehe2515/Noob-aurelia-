@@ -5,7 +5,7 @@
     "description": "Realistic shader",
     "uuid": "e8f552a5-9cd7-49a4-8c16-a6aef9315912",
     "version": [1, 0, 0],
-    "min_engine_version": [1, 21, 0]
+    "min_engine_version": [1, 26, 50]
   },
   "modules": [
     {
