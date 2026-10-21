@@ -3,5 +3,7 @@
 
 #include <tonemap.sh>
 #include <wave.sh>
+#include <noise.sh>
+#include <clouds.sh>
 
 #endif
