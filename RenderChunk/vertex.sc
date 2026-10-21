@@ -11,6 +11,8 @@ uniform vec4 RenderChunkFogAlpha;
 uniform vec4 FogAndDistanceControl;
 uniform vec4 ViewPositionAndTime;
 uniform vec4 FogColor;
+uniform vec4 TimeOfDay;
+uniform vec4 CameraPosition;
 
 SAMPLER2D_AUTOREG(s_MatTexture);
 
@@ -50,6 +52,11 @@ void main() {
 
     #if defined(ALPHA_TEST) && !defined(RENDER_AS_BILLBOARDS) && !defined(SEASONS)
       aureliaWave(worldPos, a_color0, a_position.xyz, uv0, camDis, ViewPositionAndTime.w, s_MatTexture);
+    #endif
+
+    #ifndef RENDER_AS_BILLBOARDS
+      float skyLight = smoothstep(0.5, 0.95, uv1.y);
+      color.rgb *= aureliaCloudShadow(worldPos, CameraPosition.xz, ViewPositionAndTime.w, aureliaSunDir(TimeOfDay.x), skyLight);
     #endif
 
     vec4 fogColor;
