@@ -1,0 +1,17 @@
+{
+  "format_version": 2,
+  "header": {
+    "name": "Noob Aurelia",
+    "description": "Realistic shader",
+    "uuid": "e8f552a5-9cd7-49a4-8c16-a6aef9315912",
+    "version": [1, 0, 0],
+    "min_engine_version": [1, 21, 0]
+  },
+  "modules": [
+    {
+      "type": "resources",
+      "uuid": "195bae5c-7f4c-420c-bd0a-92597a034fa7",
+      "version": [1, 0, 0]
+    }
+  ]
+}
