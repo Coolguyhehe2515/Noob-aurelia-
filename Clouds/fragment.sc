@@ -10,8 +10,7 @@ uniform vec4 ViewPositionAndTime;
 
 void main() {
   vec3 dir = normalize(v_color0.xyz);
-  float sunAngle = 6.2831853 * TimeOfDay.x;
-  vec3 sunDir = vec3(sin(sunAngle), cos(sunAngle), 0.0);
+  vec3 sunDir = aureliaSunDir(TimeOfDay.x);
 
   gl_FragColor = aureliaClouds(dir, CameraPosition.xz, ViewPositionAndTime.w, sunDir, FogColor.rgb);
 }
