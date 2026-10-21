@@ -5,11 +5,14 @@ $input a_color0, a_position, a_texcoord0, a_texcoord1
 $output v_color0, v_color1, v_fog, v_texcoord0, v_lightmapUV
 
 #include <bgfx_shader.sh>
+#include <main.sh>
 
 uniform vec4 RenderChunkFogAlpha;
 uniform vec4 FogAndDistanceControl;
 uniform vec4 ViewPositionAndTime;
 uniform vec4 FogColor;
+
+SAMPLER2D_AUTOREG(s_MatTexture);
 
 void main() {
   #ifdef INSTANCING
@@ -44,6 +47,10 @@ void main() {
     vec2 uv0 = 2.0 * a_texcoord0.xy;
     uv0 = fract(uv0) + ((floor(uv0) - 0.5) / 16384.0);
     vec2 uv1 = fract(a_texcoord1.y * vec2(256.0, 4096.0));
+
+    #if defined(ALPHA_TEST) && !defined(RENDER_AS_BILLBOARDS) && !defined(SEASONS)
+      aureliaWave(worldPos, a_color0, a_position.xyz, uv0, camDis, ViewPositionAndTime.w, s_MatTexture);
+    #endif
 
     vec4 fogColor;
     fogColor.rgb = FogColor.rgb;
