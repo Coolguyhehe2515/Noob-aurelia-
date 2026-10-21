@@ -1,6 +1,7 @@
 $input v_color0, v_color1, v_fog, v_texcoord0, v_lightmapUV
 
 #include <bgfx_shader.sh>
+#include <tonemap.sh>
 
 SAMPLER2D_AUTOREG(s_MatTexture);
 SAMPLER2D_AUTOREG(s_SeasonsTexture);
