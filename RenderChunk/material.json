@@ -1,5 +1,0 @@
-{
-  "uniform_overrides": {
-    "SunDir": "BUILTIN_MinecraftSunDirection"
-  }
-}
