@@ -7,8 +7,11 @@ uniform vec4 TimeOfDay;
 uniform vec4 CameraPosition;
 uniform vec4 FogColor;
 uniform vec4 ViewPositionAndTime;
+uniform vec4 FogAndDistanceControl;
 
 void main() {
+  aureliaRain = aureliaRainFactor(FogAndDistanceControl.xyz);
+
   vec3 dir = normalize(v_color0.xyz);
   vec3 sunDir = aureliaSunDir(TimeOfDay.x);
 
