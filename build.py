@@ -15,6 +15,10 @@ defaults = {
     'FogColor': [1.0, 1.0, 1.0, 1.0],
 }
 
+extra_uniforms = {
+    'Weather': ['ViewPositionAndTime'],
+}
+
 if os.path.isdir(stage):
     shutil.rmtree(stage)
 os.makedirs(stage)
@@ -38,12 +42,23 @@ for name in os.listdir(stage):
 
     uniforms = os.path.join(folder, 'uniforms')
     os.makedirs(uniforms, exist_ok=True)
+
     for uniform in common.get('uniform_overrides', {}):
         entry = {
             'name': uniform,
             'type': 'vec4',
             'count': 1,
             'default': defaults.get(uniform, [0.0, 0.0, 0.0, 0.0]),
+        }
+        with open(os.path.join(uniforms, uniform + '.json'), 'w') as f:
+            json.dump(entry, f, indent=2)
+
+    for uniform in extra_uniforms.get(name, []):
+        entry = {
+            'name': uniform,
+            'type': 'vec4',
+            'count': 1,
+            'default': [0.0, 0.0, 0.0, 0.0],
         }
         with open(os.path.join(uniforms, uniform + '.json'), 'w') as f:
             json.dump(entry, f, indent=2)
