@@ -7,5 +7,7 @@
 #include <sky.sh>
 #include <clouds.sh>
 #include <water.sh>
+#include <rain.sh>
+#include <wet.sh>
 
 #endif
