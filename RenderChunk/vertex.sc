@@ -51,7 +51,7 @@ void main() {
     vec2 uv1 = fract(a_texcoord1.y * vec2(256.0, 4096.0));
 
     #if defined(ALPHA_TEST) && !defined(RENDER_AS_BILLBOARDS) && !defined(SEASONS)
-      aureliaWave(worldPos, a_color0, a_position.xyz, uv0, camDis, ViewPositionAndTime.w, s_MatTexture);
+       aureliaWave(worldPos, a_color0, a_position.xyz, uv0, camDis, ViewPositionAndTime.w, s_MatTexture, CameraPosition.xyz);
     #endif
 
     #ifndef RENDER_AS_BILLBOARDS
