@@ -68,7 +68,7 @@ void main() {
     float wet = aureliaWetness(aureliaRain) * skyVis;
     if (wet > 0.001) {
       float flatUp = smoothstep(0.85, 0.95, abs(fn.y)) * step(vdir.y, 0.0);
-      aureliaWetSurface(lit, wet, flatUp, vdir, FogColor.rgb);
+      aureliaWetSurface(lit, wet, flatUp, vdir, FogColor.rgb, aureliaSunDir(TimeOfDay.x));
 
       highp vec2 absXZ = v_worldPos.xz + CameraPosition.xz;
       float puddle = aureliaPuddleMask(absXZ, wet) * flatUp;
