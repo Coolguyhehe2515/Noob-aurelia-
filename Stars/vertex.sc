@@ -2,7 +2,7 @@ $input a_color0, a_position
 $output v_color0
 
 #include <bgfx_shader.sh>
-#include <stars.sh>
+#include <main.sh>
 
 uniform vec4 StarsColor;
 uniform vec4 ViewPositionAndTime;
