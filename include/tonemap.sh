@@ -1,15 +1,15 @@
 #ifndef AURELIA_TONEMAP_H
 #define AURELIA_TONEMAP_H
 
-#define AURELIA_EXPOSURE 1.2
-#define AURELIA_SATURATION 1.6
+#define AURELIA_EXPOSURE 1.1
+#define AURELIA_SATURATION 1.3
 
 #define UCH_MAX 1.0
 #define UCH_CONTRAST 1.1
 #define UCH_LINEAR_START 0.22
 #define UCH_LINEAR_LEN 0.4
-#define UCH_BLACK 1.10
-#define UCH_PEDESTAL 0.1
+#define UCH_BLACK 1.30
+#define UCH_PEDESTAL 0.0
 
 vec3 aureliaTonemap(vec3 x) {
   float P = UCH_MAX;
