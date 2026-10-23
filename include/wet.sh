@@ -46,14 +46,14 @@ vec2 aureliaRippleGrad(highp vec2 p, highp float time, float wet) {
   return d / max(dist, 0.001) * slope;
 }
 
-void aureliaWetSurface(inout vec3 col, float wet, float flatUp, vec3 vdir, vec3 fogColor) {
+void aureliaWetSurface(inout vec3 col, float wet, float flatUp, vec3 vdir, vec3 fogColor, vec3 sunDir) {
   col *= 1.0 - AURELIA_WET_DARKEN * wet;
 
   float cosV = clamp(-vdir.y, 0.0, 1.0);
   float fres = 0.04 + 0.96 * pow(1.0 - cosV, 5.0);
   vec3 r = vec3(vdir.x, abs(vdir.y), vdir.z);
 
-  col = mix(col, aureliaSkyColor(r, fogColor), fres * AURELIA_WET_SPEC * wet * flatUp);
+  col = mix(col, aureliaSkyColor(r, fogColor, sunDir), fres * AURELIA_WET_SPEC * wet * flatUp);
 }
 
 void aureliaPuddle(inout vec3 col, vec3 vdir, highp vec2 absXZ, float camDis, highp float time, vec3 sunDir, vec3 fogColor, highp vec2 camXZ, float amount, float wet) {
@@ -66,7 +66,7 @@ void aureliaPuddle(inout vec3 col, vec3 vdir, highp vec2 absXZ, float camDis, hi
   vec3 r = reflect(vdir, n);
   r.y = abs(r.y);
 
-  vec3 sky = aureliaSkyColor(r, fogColor);
+  vec3 sky = aureliaSkyColor(r, fogColor, sunDir);
   vec4 cl = aureliaCloudsRaw(r, camXZ, time, sunDir, fogColor, 0.0);
   vec3 refl = mix(sky, cl.rgb, cl.a);
 
