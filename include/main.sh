@@ -13,5 +13,7 @@
 #include <light.sh>
 #include <godrays.sh>
 #include <caustics.sh>
+#include <stars.sh>
+#include <endsky.sh>
 
 #endif
