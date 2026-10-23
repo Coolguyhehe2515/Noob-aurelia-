@@ -17,6 +17,7 @@ defaults = {
 
 extra_uniforms = {
     'Weather': ['ViewPositionAndTime'],
+    'Stars': ['ViewPositionAndTime'],
 }
 
 if os.path.isdir(stage):
