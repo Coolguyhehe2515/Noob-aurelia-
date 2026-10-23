@@ -2,6 +2,7 @@
 #define AURELIA_MAIN_H
 
 #include <tonemap.sh>
+#include <env.sh>
 #include <wave.sh>
 #include <noise.sh>
 #include <sky.sh>
