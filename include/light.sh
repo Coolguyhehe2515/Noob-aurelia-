@@ -1,8 +1,8 @@
 #ifndef AURELIA_LIGHT_H
 #define AURELIA_LIGHT_H
 
-#define AURELIA_SUN_INTENSITY 1.0
-#define AURELIA_TORCH_COLOR vec3(1.0, 0.62, 0.30)
+#define AURELIA_SUN_INTENSITY 1.2
+#define AURELIA_TORCH_COLOR vec3(1.0, 0.72, 0.38)
 #define AURELIA_TORCH_INTENSITY 1.0
 
 float aureliaLuma(vec3 c) {
