@@ -3,6 +3,7 @@
 
 #include <noise.sh>
 #include <tonemap.sh>
+#include <env.sh>
 
 #define AURELIA_CLOUD_OCTAVES 4
 #define AURELIA_CLOUD_ALTITUDE 140.0
@@ -17,16 +18,6 @@
 #define AURELIA_CLOUD_RAIN_GROW 0.32
 #define AURELIA_CLOUD_RAIN_SOFT 0.2
 #define AURELIA_CLOUD_RAIN_DARK 0.65
-
-float aureliaRain = 0.0;
-
-float aureliaRainFactor(vec3 fogControl) {
-  vec2 clearFog = vec2(0.5 + 20.0 / fogControl.z, 1.0);
-  vec2 rainFog = vec2(0.23, 0.70);
-  vec2 f = clamp((fogControl.xy - clearFog) / (rainFog - clearFog), vec2(0.0, 0.0), vec2(1.0, 1.0));
-  float v = f.x * f.y;
-  return v * v * (3.0 - 2.0 * v);
-}
 
 vec3 aureliaSunDir(float timeOfDay) {
   float a = 6.2831853 * timeOfDay;
