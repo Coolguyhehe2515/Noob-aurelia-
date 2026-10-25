@@ -10,6 +10,7 @@
   uniform vec4 FogColor;
   uniform vec4 FogAndDistanceControl;
   uniform vec4 ViewPositionAndTime;
+  uniform vec4 CameraPosition;
 #endif
 
 void main() {
@@ -28,7 +29,7 @@ void main() {
       #endif
     } else {
       #if AURELIA_GODRAYS
-        sky += aureliaGodrays(dir, sunDir, ViewPositionAndTime.w);
+          sky += aureliaGodrays(dir * AURELIA_GODRAY_SKY_SIGN, sunDir, CameraPosition.xz, ViewPositionAndTime.w);
       #endif
     }
 
