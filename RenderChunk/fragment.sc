@@ -54,7 +54,8 @@ void main() {
   float shadow = (1.0 - smoothstep(0.55, 0.95, v_lightmapUV.y)) * (1.0 - v_lightmapUV.x);
   float skyVis = smoothstep(0.4, 0.9, v_lightmapUV.y);
 
-  vec3 lit = diffuse.rgb * shaded * texture2D(s_LightMapTexture, v_lightmapUV).rgb;
+  float sunUp = smoothstep(-0.1, 0.2, aureliaSunDir(TimeOfDay.x).y);
+  vec3 lit = diffuse.rgb * shaded * aureliaLighting(s_LightMapTexture, v_lightmapUV, sunUp);
   lit *= mix(vec3_splat(1.0), AURELIA_SHADE_COLOR, shadow);
 
   #if defined(OPAQUE) || (defined(TRANSPARENT) && !(defined(SEASONS) || defined(RENDER_AS_BILLBOARDS)))
