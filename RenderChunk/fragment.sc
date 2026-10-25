@@ -85,6 +85,14 @@ void main() {
     }
   #endif
 
+  #if defined(OPAQUE) && AURELIA_SUN_SPEC
+    float specFlat = smoothstep(0.85, 0.95, abs(fn.y)) * step(vdir.y, 0.0);
+    float specGate = specFlat * skyVis * sunUp * (1.0 - aureliaRain);
+    if (specGate > 0.01) {
+      aureliaSunSpecular(lit, s_MatTexture, v_texcoord0, vdir, aureliaSunDir(TimeOfDay.x), specGate, aureliaLuma(diffuse.rgb));
+    }
+  #endif
+
   vec3 glow = diffuse.rgb * AURELIA_GLOW_STRENGTH;
   vec3 color = mix(lit, glow, emissive);
   float alpha = diffuse.a;
