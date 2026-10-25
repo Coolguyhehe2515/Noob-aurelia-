@@ -18,7 +18,7 @@ void main() {
   vec4 c = aureliaCloudsRaw(dir, CameraPosition.xz, ViewPositionAndTime.w, sunDir, FogColor.rgb, 1.0);
 
   #if AURELIA_GODRAYS
-    c.rgb += aureliaGodrays(dir, sunDir, ViewPositionAndTime.w);
+    c.rgb += aureliaGodrays(dir, sunDir, CameraPosition.xz, ViewPositionAndTime.w);
   #endif
 
   gl_FragColor = vec4(aureliaColorGrade(c.rgb), c.a);
