@@ -16,5 +16,6 @@
 #include <stars.sh>
 #include <endsky.sh>
 #include <sunmoon.sh>
+#include <specular.sh>
 
 #endif
