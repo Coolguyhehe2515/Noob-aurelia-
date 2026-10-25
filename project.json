@@ -2,7 +2,7 @@
   "base_profile": {
     "platforms": ["ESSL_300"],
     "merge_source": ["vanilla"],
-    "include_patterns": ["RenderChunk", "Sky", "Clouds", "Weather", "EndSky", "Stars"],
+    "include_patterns": ["RenderChunk", "Sky", "Clouds", "Weather", "EndSky", "Stars", "Actor"],
     "exclude_patterns": [".*", "_*"],
     "include_search_paths": ["include"]
   },
