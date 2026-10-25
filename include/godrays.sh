@@ -3,14 +3,16 @@
 
 #include <noise.sh>
 #include <env.sh>
+#include <clouds.sh>
 
 #define AURELIA_GODRAYS 1
 #define AURELIA_GODRAY_DAWN 1.0
 #define AURELIA_GODRAY_DUSK 0.7
-#define AURELIA_GODRAY_DAY 0.0
-#define AURELIA_GODRAY_INTENSITY 0.89
-#define AURELIA_GODRAY_FREQ 3.0
+#define AURELIA_GODRAY_DAY 0.3
+#define AURELIA_GODRAY_INTENSITY 0.5
 #define AURELIA_GODRAY_FALLOFF 3.0
+#define AURELIA_GODRAY_STEPS 6
+#define AURELIA_GODRAY_SKY_SIGN -1.0
 #define AURELIA_UW_RAY_COLOR vec3(0.35, 0.75, 0.85)
 #define AURELIA_UW_RAY_INTENSITY 0.5
 #define AURELIA_UW_RAY_FREQ 5.0
@@ -34,17 +36,39 @@ float aureliaRayStrength(vec3 sunDir) {
   return mix(AURELIA_GODRAY_DAWN, AURELIA_GODRAY_DUSK, evening) * twi + AURELIA_GODRAY_DAY * day;
 }
 
-vec3 aureliaGodrays(vec3 dir, vec3 sunDir, highp float time) {
+float aureliaRayOcclusion(vec3 dir, vec3 sunDir, highp vec2 camXZ, highp float time) {
+  float cover = AURELIA_CLOUD_COVERAGE - aureliaRain * AURELIA_CLOUD_RAIN_GROW;
+  float soft = AURELIA_CLOUD_SOFTNESS + aureliaRain * AURELIA_CLOUD_RAIN_SOFT;
+  float vis = 0.0;
+
+  for (int i = 0; i < AURELIA_GODRAY_STEPS; i++) {
+    float t = (float(i) + 0.5) / float(AURELIA_GODRAY_STEPS);
+    vec3 s = normalize(mix(dir, sunDir, t));
+    highp vec2 world = camXZ + s.xz / max(s.y, 0.12) * AURELIA_CLOUD_ALTITUDE;
+    highp vec2 p = (world + vec2(1.0, 0.4) * time * AURELIA_CLOUD_SPEED) * AURELIA_CLOUD_SCALE;
+    highp float shape = (0.5 * aureliaNoise(p) + 0.25 * aureliaNoise(p * 2.03 + vec2(17.1, 9.2))) * 1.3333;
+    vis += 1.0 - smoothstep(cover, cover + soft, shape);
+  }
+
+  return vis / float(AURELIA_GODRAY_STEPS);
+}
+
+vec3 aureliaGodrays(vec3 dir, vec3 sunDir, highp vec2 camXZ, highp float time) {
   float strength = aureliaRayStrength(sunDir) * (1.0 - aureliaRain);
-  if (strength < 0.01) {
+  float cosT = dot(dir, sunDir);
+  if (strength < 0.01 || cosT < 0.0 || sunDir.y < -0.05) {
     return vec3_splat(0.0);
   }
 
-  float spread = pow(max(dot(dir, sunDir), 0.0), AURELIA_GODRAY_FALLOFF);
-  float pattern = aureliaRayPattern(dir, sunDir, time, AURELIA_GODRAY_FREQ);
+  float horizon = smoothstep(-0.02, 0.2, dir.y);
+  float glow = pow(cosT, AURELIA_GODRAY_FALLOFF);
+  float shafts = aureliaRayOcclusion(dir, sunDir, camXZ, time);
+  shafts = shafts * shafts;
+  float beam = pow(cosT, 1.5) * shafts;
+
   vec3 tint = mix(vec3(1.0, 0.58, 0.32), vec3(1.0, 0.9, 0.75), smoothstep(0.0, 0.3, sunDir.y));
 
-  return tint * (pattern * spread * strength * AURELIA_GODRAY_INTENSITY);
+  return tint * ((0.25 * glow + 0.75 * beam) * horizon * strength * AURELIA_GODRAY_INTENSITY);
 }
 
 vec3 aureliaUnderwaterRays(vec3 dir, vec3 sunDir, highp float time, float camDis) {
