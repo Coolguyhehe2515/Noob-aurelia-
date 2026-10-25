@@ -16,6 +16,7 @@ uniform vec4 FogAndDistanceControl;
 #define AURELIA_GLOW_STRENGTH 1.3
 #define AURELIA_AO_STRENGTH 1.5
 #define AURELIA_SHADE_COLOR vec3(0.78, 0.86, 1.0)
+#define AURELIA_VIGNETTE_STRENGTH 1.0
 
 void main() {
   #if defined(DEPTH_ONLY_OPAQUE) || defined(DEPTH_ONLY) || defined(INSTANCING)
@@ -57,6 +58,11 @@ void main() {
   float sunUp = smoothstep(-0.1, 0.2, aureliaSunDir(TimeOfDay.x).y);
   vec3 lit = diffuse.rgb * shaded * aureliaLighting(s_LightMapTexture, v_lightmapUV, sunUp);
   lit *= mix(vec3_splat(1.0), AURELIA_SHADE_COLOR, shadow);
+
+  vec2 screenuv = gl_FragCoord.xy / u_viewRect.zw;
+  float dist = distance(screenuv, vec2(0.5));
+  float vignette = pow(1.0 - smoothstep(0.25, 0.8, dist), 1.8);
+  lit *= mix(1.0, vignette, shadow * AURELIA_VIGNETTE_STRENGTH);
 
   #if defined(OPAQUE) || (defined(TRANSPARENT) && !(defined(SEASONS) || defined(RENDER_AS_BILLBOARDS)))
     vec3 fnc = cross(dFdx(v_worldPos), dFdy(v_worldPos));
