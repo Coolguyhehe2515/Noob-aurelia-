@@ -70,5 +70,9 @@ void main() {
   v_texcoord1 = a_texcoord0;
   v_cloudMask = aureliaRainMask(worldPos.xz + CameraPosition.xz, ViewPositionAndTime.w);
 
+  float keepChance = isRain ? AURELIA_RAIN_AMOUNT : AURELIA_SNOW_AMOUNT;
+  float keep = step(aureliaHash(vec2(a_position.x + a_position.z * 1.7, a_position.y)), keepChance);
+  pos = mix(vec4(0.0, 0.0, 0.0, 0.0), pos, keep);
+
   gl_Position = pos;
 }
