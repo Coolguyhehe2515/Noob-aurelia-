@@ -14,3 +14,4 @@ vec4 v_fog        : COLOR2;
 centroid vec2 v_texcoord0  : TEXCOORD0;
 vec2 v_lightmapUV : TEXCOORD1;
 vec3 v_worldPos   : TEXCOORD2;
+vec3 v_chunkPos   : TEXCOORD3;
