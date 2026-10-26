@@ -39,7 +39,7 @@ void main() {
   }
 
   vec3 light = texture2D(s_LightingTexture, lightingUV).rgb;
-  vec3 col = diffuse.rgb * light;
+  vec3 col = diffuse.rgb * light * mix(vec3_splat(1.0), AURELIA_RAIN_COLOR, AURELIA_RAIN_COLOR_MIX);
   col = mix(col, v_fog.rgb, v_fog.a);
   col = aureliaColorGrade(col);
 
