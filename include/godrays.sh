@@ -46,7 +46,7 @@ float aureliaRayOcclusion(vec3 dir, vec3 sunDir, highp vec2 camXZ, highp float t
     vec3 s = normalize(mix(dir, sunDir, t));
     highp vec2 world = camXZ + s.xz / max(s.y, 0.12) * AURELIA_CLOUD_ALTITUDE;
     highp vec2 p = (world + vec2(1.0, 0.4) * time * AURELIA_CLOUD_SPEED) * AURELIA_CLOUD_SCALE;
-    highp float shape = (0.5 * aureliaNoise(p) + 0.25 * aureliaNoise(p * 2.03 + vec2(17.1, 9.2))) * 1.3333;
+    highp float shape = aureliaNoise(p);
     vis += 1.0 - smoothstep(cover, cover + soft, shape);
   }
 
