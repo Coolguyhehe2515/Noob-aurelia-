@@ -15,6 +15,10 @@
 #define AURELIA_RIPPLE_DENSITY 2.0
 #define AURELIA_RIPPLE_SPEED 0.9
 #define AURELIA_RIPPLE_AMP 0.35
+#define AURELIA_SPLASH_DENSITY 3.0
+#define AURELIA_SPLASH_SPEED 1.6
+#define AURELIA_SPLASH_STRENGTH 0.8
+#define AURELIA_SPLASH_AMOUNT 0.5
 
 float aureliaWetness(float rain) {
   return smoothstep(0.1, 0.8, rain);
@@ -46,6 +50,28 @@ vec2 aureliaRippleGrad(highp vec2 p, highp float time, float wet) {
   return d / max(dist, 0.001) * slope;
 }
 
+float aureliaSplash(highp vec2 p, highp float time, float wet) {
+  highp vec2 q = p * AURELIA_SPLASH_DENSITY;
+  highp vec2 cell = floor(q);
+  vec2 f = fract(q);
+  float h1 = aureliaHash(cell + vec2(3.1, 8.7));
+  float h2 = aureliaHash(cell + vec2(29.3, 1.9));
+  float h3 = aureliaHash(cell + vec2(13.7, 31.1));
+  float h4 = aureliaHash(cell + vec2(5.3, 17.9));
+
+  vec2 c = vec2(0.25 + 0.5 * h1, 0.25 + 0.5 * h2);
+  float life = fract(time * AURELIA_SPLASH_SPEED + h3);
+  float dist = length(f - c) / AURELIA_SPLASH_DENSITY;
+
+  float a = dist / (0.025 + 0.05 * life);
+  float jet = exp(-a * a) * pow(1.0 - life, 4.0) * (1.0 - smoothstep(0.15, 0.4, life));
+
+  float b = (dist - 0.02 - life * 0.06) / 0.012;
+  float crown = exp(-b * b) * (1.0 - life) * (1.0 - life);
+
+  return (jet + 0.6 * crown) * step(h4, wet * AURELIA_SPLASH_AMOUNT);
+}
+
 void aureliaWetSurface(inout vec3 col, float wet, float flatUp, vec3 vdir, vec3 fogColor, vec3 sunDir) {
   col *= 1.0 - AURELIA_WET_DARKEN * wet;
 
@@ -74,6 +100,10 @@ void aureliaPuddle(inout vec3 col, vec3 vdir, highp vec2 absXZ, float camDis, hi
   float k = clamp(fres * AURELIA_PUDDLE_REFLECT, 0.0, 1.0);
 
   col = mix(col, mix(dark, refl, k), amount);
+
+  float day = mix(0.3, 1.0, smoothstep(-0.1, 0.3, sunDir.y));
+  float splash = aureliaSplash(absXZ, time, wet) * (1.0 - smoothstep(15.0, 45.0, camDis));
+  col += vec3(0.9, 0.95, 1.0) * (splash * AURELIA_SPLASH_STRENGTH * day * amount);
 }
 
 #endif
