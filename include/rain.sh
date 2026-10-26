@@ -3,7 +3,7 @@
 
 #include <clouds.sh>
 
-#define AURELIA_RAIN_WIDTH 0.7
+#define AURELIA_RAIN_WIDTH 0.5
 #define AURELIA_RAIN_LENGTH 1.25
 #define AURELIA_RAIN_OPACITY 0.65
 #define AURELIA_RAIN_EDGE_LOW 0.1
@@ -16,7 +16,7 @@
 
 float aureliaRainMask(highp vec2 absXZ, highp float time) {
   highp vec2 p = (absXZ + vec2(1.0, 0.4) * time * AURELIA_CLOUD_SPEED) * AURELIA_CLOUD_SCALE;
-  return smoothstep(AURELIA_RAIN_EDGE_LOW, AURELIA_RAIN_EDGE_HIGH, aureliaCloudDensity(p, time));
+  return smoothstep(AURELIA_RAIN_EDGE_LOW, AURELIA_RAIN_EDGE_HIGH, aureliaCloudDensityCoarse(p, time));
 }
 
 vec2 aureliaRainWind(highp vec2 absXZ, highp float time) {
