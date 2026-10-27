@@ -15,7 +15,7 @@ void main() {
   vec3 dir = normalize(v_color0.xyz);
   vec3 sunDir = aureliaSunDir(TimeOfDay.x);
 
-  vec4 c = aureliaCloudsRaw(dir, CameraPosition.xz, ViewPositionAndTime.w, sunDir, FogColor.rgb, 1.0);
+  vec4 c = aureliaCloudsRaw(dir, CameraPosition.xz, ViewPositionAndTime.w, sunDir, aureliaSkyHorizon(vec3(0.45, 0.5, 0.56), sunDir), 1.0);
 
   #if AURELIA_GODRAYS
     c.rgb += aureliaGodrays(dir, sunDir, CameraPosition.xz, ViewPositionAndTime.w);
