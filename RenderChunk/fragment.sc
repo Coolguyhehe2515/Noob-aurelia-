@@ -149,6 +149,12 @@ void main() {
   #endif
 
   color = mix(color, isEnd ? AURELIA_END_FOG : v_fog.rgb, v_fog.a);
+  #if AURELIA_GODRAYS && (defined(OPAQUE) || (defined(TRANSPARENT) && !(defined(SEASONS) || defined(RENDER_AS_BILLBOARDS))))
+    if (aureliaUnderwater(FogColor.rgb, FogAndDistanceControl.xyz)) {
+      color += aureliaUnderwaterRays(vdir, aureliaSunDir(TimeOfDay.x), ViewPositionAndTime.w, camDis) * smoothstep(0.05, 0.6, v_lightmapUV.y) * (1.0 - aureliaRain);
+    }
+  #endif
+
   color = aureliaColorGrade(color);
 
   gl_FragColor = vec4(color, alpha);
