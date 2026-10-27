@@ -72,17 +72,19 @@ vec3 aureliaGodrays(vec3 dir, vec3 sunDir, highp vec2 camXZ, highp float time) {
 }
 
 vec3 aureliaUnderwaterRays(vec3 dir, vec3 sunDir, highp float time, float camDis) {
-  float sunUp = smoothstep(0.0, 0.3, sunDir.y);
+  float sunUp = smoothstep(-0.05, 0.25, sunDir.y);
   if (sunUp < 0.01) {
     return vec3_splat(0.0);
   }
 
-  vec3 axis = normalize(vec3(sunDir.x * 0.7, max(sunDir.y, 0.35), sunDir.z * 0.7));
-  float pattern = aureliaRayPattern(dir, axis, time * 2.0, AURELIA_UW_RAY_FREQ);
-  float spread = pow(max(dot(dir, axis), 0.0), 2.0);
-  float path = 1.0 - exp(-camDis * 0.05);
+  vec3 axis = normalize(vec3(sunDir.x * 0.7, max(sunDir.y, 0.4), sunDir.z * 0.7));
+  float facing = dot(dir, axis) * 0.5 + 0.5;
+  float spread = 0.35 + 0.65 * facing * facing;
 
-  return AURELIA_UW_RAY_COLOR * (pattern * spread * path * sunUp * AURELIA_UW_RAY_INTENSITY);
+  float beams = aureliaRayPattern(dir, axis, time * 0.6, 3.5) * 0.65 + aureliaRayPattern(dir, axis, time * 1.1 + 9.0, 7.0) * 0.35;
+  float path = 1.0 - exp(-camDis * 0.045);
+
+  return AURELIA_UW_RAY_COLOR * ((0.15 + beams) * spread * path * sunUp * AURELIA_UW_RAY_INTENSITY);
 }
 
 #endif
