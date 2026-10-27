@@ -1,7 +1,7 @@
 {
-  "name": "CausticTexture",
-  "register_slot": 4,
-  "binding_slot": 4,
+  "name": "CausticTex",
+  "register_slot": 12,
+  "binding_slot": 12,
   "type": "texture2D",
   "precision": "lowp",
   "access": "readonly",
@@ -9,7 +9,7 @@
   "default_texture": "",
   "unordered_access": false,
   "slot_count": 1,
-  "texture_path": "textures/environment/caustics",
+  "texture_path": "textures/environment/caustic",
   "unknown": 0,
   "sampler_state": {
     "filter": "Bilinear",
