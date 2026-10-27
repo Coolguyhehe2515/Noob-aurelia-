@@ -145,6 +145,8 @@ void main() {
 
     if (isWater && abs(fn.y) > 0.9 && vdir.y < 0.0) {
       aureliaWater(color, alpha, vdir, v_worldPos.xz + CameraPosition.xz, camDis, ViewPositionAndTime.w, aureliaSunDir(TimeOfDay.x), FogColor.rgb, CameraPosition.xz, skyVis);
+    } else if (isWater && abs(fn.y) > 0.9 && vdir.y > 0.0 && aureliaUnderwater(FogColor.rgb, FogAndDistanceControl.xyz)) {
+      aureliaSnellWindow(color, alpha, vdir, v_worldPos.xz + CameraPosition.xz, camDis, ViewPositionAndTime.w, aureliaSunDir(TimeOfDay.x), FogColor.rgb, CameraPosition.xz);
     }
   #endif
 
