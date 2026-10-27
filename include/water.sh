@@ -39,9 +39,10 @@ void aureliaWater(inout vec3 col, inout float alpha, vec3 vdir, highp vec2 absXZ
   vec4 cl = aureliaCloudsRaw(r, camXZ, time, sunDir, fogColor, 0.0);
   vec3 refl = mix(sky, cl.rgb, cl.a);
 
-  float sunUp = smoothstep(0.0, 0.2, sunDir.y);
+  float sunUp = smoothstep(-0.05, 0.08, sunDir.y);
   vec3 sunCol = mix(vec3(1.0, 0.55, 0.25), vec3(1.0, 0.96, 0.88), smoothstep(0.0, 0.4, sunDir.y));
-  float glint = pow(max(dot(r, sunDir), 0.0), 220.0) * sunUp * (1.0 - cl.a) * skyVis;
+  float glintPow = mix(60.0, 220.0, smoothstep(0.0, 0.5, sunDir.y));
+  float glint = pow(max(dot(r, sunDir), 0.0), glintPow) * sunUp * (1.0 - cl.a * 0.8) * skyVis;
 
   float k = clamp(fres * AURELIA_WATER_REFLECT, 0.0, 1.0) * skyVis;
   col = mix(col, refl, k);
