@@ -17,6 +17,7 @@ uniform vec4 CameraPosition;
 SAMPLER2D_AUTOREG(s_MatTexture);
 
 void main() {
+  aureliaRain = aureliaRainFactor(FogAndDistanceControl.xyz);
   #ifdef INSTANCING
     mat4 model = mtxFromCols(i_data0, i_data1, i_data2, i_data3);
   #else
@@ -60,7 +61,9 @@ void main() {
     #endif
 
     vec4 fogColor;
-    fogColor.rgb = FogColor.rgb;
+    bool underwater = aureliaUnderwater(FogColor.rgb, FogAndDistanceControl.xyz);
+    bool otherDim = aureliaIsNether(FogColor.rgb, FogAndDistanceControl.xy) || aureliaIsEnd(FogColor.rgb);
+    fogColor.rgb = (!otherDim && !underwater) ? aureliaSkyHorizon(FogColor.rgb, aureliaSunDir(TimeOfDay.x)) : FogColor.rgb;
     fogColor.a = clamp((relativeDist - FogAndDistanceControl.x) / (FogAndDistanceControl.y - FogAndDistanceControl.x), 0.0, 1.0);
 
     v_color0 = color;
