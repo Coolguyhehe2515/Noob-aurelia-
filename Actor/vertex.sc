@@ -39,7 +39,7 @@ void main() {
     float relativeDist = position.z / FogControl.z;
 
     vec4 fogColor;
-    fogColor.rgb = FogColor.rgb;
+    fogColor.rgb = aureliaIsEnd(FogColor.rgb) ? AURELIA_END_FOG : FogColor.rgb;
     fogColor.a = clamp((relativeDist - FogControl.x) / (FogControl.y - FogControl.x), 0.0, 1.0);
 
     float lightIntensity = calculateLightIntensity(World, vec4(a_normal.xyz, 0.0), TileLightColor);
@@ -48,7 +48,11 @@ void main() {
     v_texcoord0 = texcoord0;
     v_color0 = a_color0;
     v_fog = fogColor;
-    v_light = vec4(lightIntensity * TileLightColor.rgb, 1.0);
+    vec3 tileLight = TileLightColor.rgb;
+    if (aureliaIsEnd(FogColor.rgb)) {
+      tileLight = AURELIA_END_AMBIENT * (aureliaLuma(tileLight) / aureliaLuma(AURELIA_END_AMBIENT));
+    }
+    v_light = vec4(lightIntensity * tileLight, 1.0);
   #endif
 
   gl_Position = position;
