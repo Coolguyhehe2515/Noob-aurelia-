@@ -52,6 +52,9 @@ void main() {
     if (aureliaIsEnd(FogColor.rgb)) {
       tileLight = AURELIA_END_AMBIENT * (aureliaLuma(tileLight) / aureliaLuma(AURELIA_END_AMBIENT));
     }
+    aureliaRain = aureliaRainFactor(FogControl.xyz);
+    tileLight = mix(tileLight, vec3_splat(aureliaLuma(tileLight)), aureliaRain * AURELIA_ACTOR_RAIN_GRAY);
+    tileLight *= 1.0 - AURELIA_ACTOR_RAIN_DARKEN * aureliaRain;
     v_light = vec4(lightIntensity * tileLight, 1.0);
   #endif
 
