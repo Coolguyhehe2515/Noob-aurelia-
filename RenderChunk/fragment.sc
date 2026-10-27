@@ -24,6 +24,11 @@ uniform vec4 FogAndDistanceControl;
 #define AURELIA_AO_STRENGTH 1.5
 #define AURELIA_SHADE_COLOR vec3(0.78, 0.86, 1.0)
 #define AURELIA_VIGNETTE_STRENGTH 1.0
+#define AURELIA_METAL
+#define AURELIA_METAL_REFLECT 1.1
+#define AURELIA_METAL_DARKEN 0.55
+#define AURELIA_METAL_TINT 0.7
+#define AURELIA_METAL_SHINE 60.0
 #define AURELIA_CAUSTIC_STRENGTH 0.9
 #define AURELIA_CAUSTIC_SCALE 0.8
 #define AURELIA_CAUSTIC_SPEED 0.5
@@ -63,9 +68,11 @@ void main() {
   #endif
 
   float emissive = 0.0;
+  float metal = 0.0;
   #ifdef OPAQUE
     float alpha255 = diffuse.a * 255.0;
     emissive = clamp((255.0 - alpha255) / 3.0, 0.0, 1.0) * step(249.0, alpha255);
+    metal = clamp((250.0 - alpha255) / 10.0, 0.0, 1.0);
   #endif
 
   #if defined(SEASONS) && (defined(OPAQUE) || defined(ALPHA_TEST))
@@ -127,7 +134,27 @@ void main() {
       }
     #endif
 
-    #if AURELIA_SUN_SPEC
+    #ifdef AURELIA_METAL
+      if (metal > 0.01) {
+        vec3 mN = dot(fn, vdir) > 0.0 ? -fn : fn;
+        vec3 mr = reflect(vdir, mN);
+        mr.y = abs(mr.y);
+        vec3 sunD = aureliaSunDir(TimeOfDay.x);
+        vec3 skyR = aureliaSkyColor(mr, FogColor.rgb, sunD);
+        vec4 clR = aureliaCloudsRaw(mr, CameraPosition.xz, ViewPositionAndTime.w, sunD, FogColor.rgb, 0.0);
+        vec3 envR = isEnd ? AURELIA_END_AMBIENT * 0.8 : mix(skyR, clR.rgb, clR.a);
+        float cosM = clamp(dot(mN, -vdir), 0.0, 1.0);
+        float fresM = 0.55 + 0.45 * pow(1.0 - cosM, 5.0);
+        vec3 tintM = mix(vec3_splat(1.0), diffuse.rgb / max(max(diffuse.r, max(diffuse.g, diffuse.b)), 0.001), AURELIA_METAL_TINT);
+        float envVis = mix(0.25, 1.0, skyVis);
+        vec3 refl = envR * tintM * (0.5 + 0.9 * aureliaLuma(diffuse.rgb)) * envVis;
+        vec3 sunTintM = mix(vec3(1.0, 0.55, 0.25), vec3(1.0, 0.95, 0.85), smoothstep(0.0, 0.35, sunD.y));
+        refl += sunTintM * pow(max(dot(mr, sunD), 0.0), AURELIA_METAL_SHINE) * sunUp * skyVis * (isEnd ? 0.0 : 1.0);
+        lit = mix(lit, lit * (1.0 - AURELIA_METAL_DARKEN) + refl * AURELIA_METAL_REFLECT * fresM, metal);
+      }
+    #endif
+
+    #ifdef AURELIA_SUN_SPEC
       vec3 specN = dot(fn, vdir) > 0.0 ? -fn : fn;
       float specGate = skyVis * sunUp * (1.0 - aureliaRain) * (1.0 - smoothstep(0.6, 1.0, camDis / AURELIA_RELIEF_RANGE)) * (isEnd ? 0.0 : 1.0);
       if (specGate > 0.01) {
