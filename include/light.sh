@@ -11,6 +11,14 @@ float aureliaLuma(vec3 c) {
   return dot(c, vec3(0.2126, 0.7152, 0.0722));
 }
 
+bool aureliaIsNether(vec3 fogColor, vec2 fogControl) {
+  float expectedFogX = 0.029 + 0.09 * fogControl.y * fogControl.y;
+  bool netherFogCtrl = fogControl.x < 0.14 && abs(fogControl.x - expectedFogX) < 0.02;
+  bool netherFogCol = (fogColor.r + fogColor.g) > 0.0;
+  bool underLava = fogControl.x == 0.0 && fogColor.b == 0.0 && fogColor.g < 0.18 && fogColor.r - fogColor.g > 0.1;
+  return (netherFogCtrl && netherFogCol) || underLava;
+}
+
 bool aureliaIsEnd(vec3 fogColor) {
   return fogColor.r == fogColor.b && (fogColor.r - fogColor.g > 0.24 || (fogColor.g == 0.0 && fogColor.r > 0.1));
 }
