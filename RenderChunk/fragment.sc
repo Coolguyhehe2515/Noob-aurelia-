@@ -7,11 +7,12 @@ SAMPLER2D_AUTOREG(s_MatTexture);
 SAMPLER2D_AUTOREG(s_SeasonsTexture);
 SAMPLER2D_AUTOREG(s_LightMapTexture);
 
-#define AURELIA_CAUSTICS 0
-#define AURELIA_CAUSTIC_TEXTURE 1
+#define AURELIA_CAUSTICS
+#define AURELIA_CAUSTIC_TEXTURE
+#define AURELIA_METAL
 
-#if AURELIA_CAUSTIC_TEXTURE
-  SAMPLER2D_AUTOREG(s_CausticsTexture);
+#ifdef AURELIA_CAUSTIC_TEXTURE
+  SAMPLER2D_AUTOREG(s_CausticTex);
 #endif
 
 uniform vec4 ViewPositionAndTime;
@@ -24,31 +25,38 @@ uniform vec4 FogAndDistanceControl;
 #define AURELIA_AO_STRENGTH 1.5
 #define AURELIA_SHADE_COLOR vec3(0.78, 0.86, 1.0)
 #define AURELIA_VIGNETTE_STRENGTH 1.0
-#define AURELIA_METAL
+#define AURELIA_CAUSTIC_INTENSITY 1.0
+#define AURELIA_CAUSTIC_SCALE 0.5
+#define AURELIA_CAUSTIC_FPS 10.0
+#define AURELIA_CAUSTIC_TINT vec3(0.75, 0.95, 1.0)
+#define AURELIA_UW_EPS 0.004
 #define AURELIA_METAL_REFLECT 1.1
 #define AURELIA_METAL_DARKEN 0.55
 #define AURELIA_METAL_TINT 0.7
 #define AURELIA_METAL_SHINE 60.0
-#define AURELIA_CAUSTIC_STRENGTH 0.9
-#define AURELIA_CAUSTIC_SCALE 0.8
-#define AURELIA_CAUSTIC_SPEED 0.5
-#define AURELIA_CAUSTIC_SHARP 9.0
-#define AURELIA_CAUSTIC_TEX_SCALE 0.15
-#define AURELIA_CAUSTIC_TEX_SPEED 0.02
-#define AURELIA_UW_EPS 0.004
 
-float aureliaCausticPattern(highp vec2 p, highp float time) {
-  #if AURELIA_CAUSTIC_TEXTURE
-    highp vec2 uv = p * AURELIA_CAUSTIC_TEX_SCALE + vec2(time * AURELIA_CAUSTIC_TEX_SPEED);
-    return texture2D(s_CausticsTexture, uv).r;
-  #else
-    highp vec2 q = p * AURELIA_CAUSTIC_SCALE;
-    highp float t = time * AURELIA_CAUSTIC_SPEED;
-    float a = 1.0 - abs(aureliaNoise(q + vec2(t, t * 0.6)) * 2.0 - 1.0);
-    float b = 1.0 - abs(aureliaNoise(q * 1.37 + vec2(-t * 0.8, t) + 7.7) * 2.0 - 1.0);
-    return clamp(pow(a, AURELIA_CAUSTIC_SHARP) + pow(b, AURELIA_CAUSTIC_SHARP), 0.0, 1.0);
-  #endif
+#ifdef AURELIA_CAUSTIC_TEXTURE
+float aureliaCausticSample(highp vec2 absXZ, highp float time) {
+  highp vec2 uv = fract(absXZ * AURELIA_CAUSTIC_SCALE);
+  highp float ft = time * AURELIA_CAUSTIC_FPS;
+  float f0 = mod(floor(ft), 32.0);
+  float f1 = mod(f0 + 1.0, 32.0);
+  highp float x = (uv.x * 127.0 + 0.5) / 128.0;
+  highp float y0 = (f0 * 128.0 + 0.5 + uv.y * 127.0) / 4096.0;
+  highp float y1 = (f1 * 128.0 + 0.5 + uv.y * 127.0) / 4096.0;
+  float a = texture2D(s_CausticTex, vec2(x, y0)).r;
+  float b = texture2D(s_CausticTex, vec2(x, y1)).r;
+  return mix(a, b, fract(ft));
 }
+#else
+float aureliaCausticSample(highp vec2 absXZ, highp float time) {
+  highp vec2 q = absXZ * 0.8;
+  highp float t = time * 0.5;
+  float a = 1.0 - abs(aureliaNoise(q + vec2(t, t * 0.6)) * 2.0 - 1.0);
+  float b = 1.0 - abs(aureliaNoise(q * 1.37 + vec2(-t * 0.8, t) + 7.7) * 2.0 - 1.0);
+  return clamp(pow(a, 9.0) + pow(b, 9.0), 0.0, 1.0);
+}
+#endif
 
 void main() {
   #if defined(DEPTH_ONLY_OPAQUE) || defined(DEPTH_ONLY) || defined(INSTANCING)
@@ -95,7 +103,7 @@ void main() {
   vec3 lit = diffuse.rgb * shaded * lightCol;
   lit *= mix(vec3_splat(1.0), AURELIA_SHADE_COLOR, shadow);
 
-  vec2 screenuv = gl_FragCoord.xy / u_viewRect.zw;
+  vec2 screenuv = gl_FragCoord.xy / max(u_viewRect.zw, vec2(1.0));
   float dist = distance(screenuv, vec2(0.5));
   float vignette = pow(1.0 - smoothstep(0.25, 0.8, dist), 1.8);
   lit *= mix(1.0, vignette, shadow * AURELIA_VIGNETTE_STRENGTH);
@@ -124,13 +132,13 @@ void main() {
       }
     }
 
-    #if AURELIA_CAUSTICS
+    #ifdef AURELIA_CAUSTICS
       bool blockUnderWater = v_lightmapUV.y < 0.9 && abs((2.0 * v_chunkPos.y - 15.0) / 16.0 - v_lightmapUV.y) < AURELIA_UW_EPS;
       bool camUnderwater = aureliaUnderwater(FogColor.rgb, FogAndDistanceControl.xyz);
-      float causGate = float(blockUnderWater || camUnderwater) * smoothstep(0.3, 0.9, abs(fn.y)) * sunUp * (1.0 - aureliaRain) * (isEnd ? 0.0 : 1.0);
+      float causGate = float(blockUnderWater || camUnderwater) * smoothstep(0.3, 0.9, abs(fn.y)) * (isEnd ? 0.0 : 1.0);
       if (causGate > 0.01) {
-        float caus = aureliaCausticPattern(v_worldPos.xz + CameraPosition.xz, ViewPositionAndTime.w);
-        lit *= 1.0 + caus * AURELIA_CAUSTIC_STRENGTH * causGate;
+        float caus = aureliaCausticSample(v_worldPos.xz + CameraPosition.xz, ViewPositionAndTime.w);
+        lit += AURELIA_CAUSTIC_TINT * (caus * AURELIA_CAUSTIC_INTENSITY * 0.45 * causGate * mix(0.35, 1.0, sunUp));
       }
     #endif
 
@@ -172,13 +180,12 @@ void main() {
 
     if (isWater && abs(fn.y) > 0.9 && vdir.y < 0.0) {
       aureliaWater(color, alpha, vdir, v_worldPos.xz + CameraPosition.xz, camDis, ViewPositionAndTime.w, aureliaSunDir(TimeOfDay.x), FogColor.rgb, CameraPosition.xz, skyVis);
-    } else if (isWater && abs(fn.y) > 0.9 && vdir.y > 0.0 && aureliaUnderwater(FogColor.rgb, FogAndDistanceControl.xyz)) {
-      aureliaSnellWindow(color, alpha, vdir, v_worldPos.xz + CameraPosition.xz, camDis, ViewPositionAndTime.w, aureliaSunDir(TimeOfDay.x), FogColor.rgb, CameraPosition.xz);
     }
   #endif
 
   color = mix(color, isEnd ? AURELIA_END_FOG : v_fog.rgb, v_fog.a);
-  #if AURELIA_GODRAYS && (defined(OPAQUE) || (defined(TRANSPARENT) && !(defined(SEASONS) || defined(RENDER_AS_BILLBOARDS))))
+
+  #if defined(AURELIA_GODRAYS) && (defined(OPAQUE) || (defined(TRANSPARENT) && !(defined(SEASONS) || defined(RENDER_AS_BILLBOARDS))))
     if (aureliaUnderwater(FogColor.rgb, FogAndDistanceControl.xyz)) {
       color += aureliaUnderwaterRays(vdir, aureliaSunDir(TimeOfDay.x), ViewPositionAndTime.w, camDis) * smoothstep(0.05, 0.6, v_lightmapUV.y) * (1.0 - aureliaRain);
     }
