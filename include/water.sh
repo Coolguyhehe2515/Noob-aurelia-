@@ -52,4 +52,24 @@ void aureliaWater(inout vec3 col, inout float alpha, vec3 vdir, highp vec2 absXZ
   alpha = max(alpha, min(glint * AURELIA_WATER_GLINT, 1.0));
 }
 
+#define AURELIA_SNELL_TINT vec3(0.78, 0.94, 1.0)
+#define AURELIA_SNELL_OUTSIDE 0.5
+
+void aureliaSnellWindow(inout vec3 col, inout float alpha, vec3 vdir, highp vec2 absXZ, float camDis, highp float time, vec3 sunDir, vec3 waterFog, highp vec2 camXZ) {
+  vec3 nrm = -aureliaWaterNormal(absXZ, time, AURELIA_WATER_ROUGHNESS * 0.8, camDis);
+  vec3 t = refract(vdir, nrm, 1.333);
+  float inside = step(0.0001, dot(t, t));
+  vec3 td = inside > 0.5 ? normalize(t) : vec3(0.0, 1.0, 0.0);
+  td.y = max(td.y, 0.02);
+
+  vec3 skyFog = vec3(0.45, 0.5, 0.56);
+  vec3 sky = aureliaSkyColor(td, skyFog, sunDir);
+  vec4 cl = aureliaCloudsRaw(td, camXZ, time, sunDir, skyFog, 0.0);
+  vec3 win = mix(sky, cl.rgb, cl.a) * AURELIA_SNELL_TINT;
+
+  vec3 tir = waterFog * AURELIA_SNELL_OUTSIDE;
+  col = mix(tir, win, inside * smoothstep(0.0, 0.12, td.y));
+  alpha = 1.0;
+}
+
 #endif
