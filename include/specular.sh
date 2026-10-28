@@ -2,14 +2,7 @@
 #define AURELIA_SPECULAR_H
 
 #include <light.sh>
-
-#define AURELIA_SUN_SPEC 1
-#define AURELIA_SPEC_WIDE 4.0
-#define AURELIA_SPEC_POWER 40.0
-#define AURELIA_SPEC_BUMP 2.5
-#define AURELIA_SPEC_INTENSITY 0.5
-#define AURELIA_RELIEF 2.0
-#define AURELIA_RELIEF_RANGE 48.0
+#include <config.sh>
 
 float aureliaLumaTap(sampler2D tex, vec2 c) {
   return aureliaLuma(texture2DLod(tex, c, 0.0).rgb);
