@@ -24,12 +24,13 @@ void main() {
 
     if (aureliaUnderwater(FogColor.rgb, FogAndDistanceControl.xyz)) {
       sky = FogColor.rgb;
-      #if AURELIA_GODRAYS
+
+      #ifdef AURELIA_GODRAYS
         sky += aureliaUnderwaterRays(dir, sunDir, ViewPositionAndTime.w, 80.0);
       #endif
     } else {
-      #if AURELIA_GODRAYS
-          sky += aureliaGodrays(dir * AURELIA_GODRAY_SKY_SIGN, sunDir, CameraPosition.xz, ViewPositionAndTime.w);
+      #ifdef AURELIA_GODRAYS
+        sky += aureliaGodrays(dir * AURELIA_GODRAY_SKY_SIGN, sunDir, CameraPosition.xz, ViewPositionAndTime.w);
       #endif
     }
 
