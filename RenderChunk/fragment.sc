@@ -7,10 +7,6 @@ SAMPLER2D_AUTOREG(s_MatTexture);
 SAMPLER2D_AUTOREG(s_SeasonsTexture);
 SAMPLER2D_AUTOREG(s_LightMapTexture);
 
-#define AURELIA_CAUSTICS
-#define AURELIA_CAUSTIC_TEXTURE
-#define AURELIA_METAL
-
 #ifdef AURELIA_CAUSTIC_TEXTURE
   SAMPLER2D_AUTOREG(s_CausticTex);
 #endif
@@ -20,20 +16,6 @@ uniform vec4 TimeOfDay;
 uniform vec4 CameraPosition;
 uniform vec4 FogColor;
 uniform vec4 FogAndDistanceControl;
-
-#define AURELIA_GLOW_STRENGTH 1.3
-#define AURELIA_AO_STRENGTH 1.5
-#define AURELIA_SHADE_COLOR vec3(0.78, 0.86, 1.0)
-#define AURELIA_VIGNETTE_STRENGTH 1.0
-#define AURELIA_CAUSTIC_INTENSITY 1.0
-#define AURELIA_CAUSTIC_SCALE 0.5
-#define AURELIA_CAUSTIC_FPS 10.0
-#define AURELIA_CAUSTIC_TINT vec3(0.75, 0.95, 1.0)
-#define AURELIA_UW_EPS 0.004
-#define AURELIA_METAL_REFLECT 1.1
-#define AURELIA_METAL_DARKEN 0.55
-#define AURELIA_METAL_TINT 0.7
-#define AURELIA_METAL_SHINE 60.0
 
 #ifdef AURELIA_CAUSTIC_TEXTURE
 float aureliaCausticSample(highp vec2 absXZ, highp float time) {
@@ -77,6 +59,7 @@ void main() {
 
   float emissive = 0.0;
   float metal = 0.0;
+
   #ifdef OPAQUE
     float alpha255 = diffuse.a * 255.0;
     emissive = clamp((255.0 - alpha255) / 3.0, 0.0, 1.0) * step(249.0, alpha255);
@@ -121,12 +104,14 @@ void main() {
 
   #ifdef OPAQUE
     float wet = aureliaWetness(aureliaRain) * skyVis;
+
     if (wet > 0.001) {
       float flatUp = smoothstep(0.85, 0.95, abs(fn.y)) * step(vdir.y, 0.0);
       aureliaWetSurface(lit, wet, flatUp, vdir, FogColor.rgb, aureliaSunDir(TimeOfDay.x));
 
       highp vec2 absXZ = v_worldPos.xz + CameraPosition.xz;
       float puddle = aureliaPuddleMask(absXZ, wet) * flatUp;
+
       if (puddle > 0.01) {
         aureliaPuddle(lit, vdir, absXZ, camDis, ViewPositionAndTime.w, aureliaSunDir(TimeOfDay.x), FogColor.rgb, CameraPosition.xz, puddle, wet);
       }
@@ -136,6 +121,7 @@ void main() {
       bool blockUnderWater = v_lightmapUV.y < 0.9 && abs((2.0 * v_chunkPos.y - 15.0) / 16.0 - v_lightmapUV.y) < AURELIA_UW_EPS;
       bool camUnderwater = aureliaUnderwater(FogColor.rgb, FogAndDistanceControl.xyz);
       float causGate = float(blockUnderWater || camUnderwater) * smoothstep(0.3, 0.9, abs(fn.y)) * (isEnd ? 0.0 : 1.0);
+
       if (causGate > 0.01) {
         float caus = aureliaCausticSample(v_worldPos.xz + CameraPosition.xz, ViewPositionAndTime.w);
         lit += AURELIA_CAUSTIC_TINT * (caus * AURELIA_CAUSTIC_INTENSITY * 0.45 * causGate * mix(0.35, 1.0, sunUp));
@@ -147,17 +133,21 @@ void main() {
         vec3 mN = dot(fn, vdir) > 0.0 ? -fn : fn;
         vec3 mr = reflect(vdir, mN);
         mr.y = abs(mr.y);
+
         vec3 sunD = aureliaSunDir(TimeOfDay.x);
         vec3 skyR = aureliaSkyColor(mr, FogColor.rgb, sunD);
         vec4 clR = aureliaCloudsRaw(mr, CameraPosition.xz, ViewPositionAndTime.w, sunD, FogColor.rgb, 0.0);
         vec3 envR = isEnd ? AURELIA_END_AMBIENT * 0.8 : mix(skyR, clR.rgb, clR.a);
+
         float cosM = clamp(dot(mN, -vdir), 0.0, 1.0);
         float fresM = 0.55 + 0.45 * pow(1.0 - cosM, 5.0);
         vec3 tintM = mix(vec3_splat(1.0), diffuse.rgb / max(max(diffuse.r, max(diffuse.g, diffuse.b)), 0.001), AURELIA_METAL_TINT);
         float envVis = mix(0.25, 1.0, skyVis);
         vec3 refl = envR * tintM * (0.5 + 0.9 * aureliaLuma(diffuse.rgb)) * envVis;
+
         vec3 sunTintM = mix(vec3(1.0, 0.55, 0.25), vec3(1.0, 0.95, 0.85), smoothstep(0.0, 0.35, sunD.y));
         refl += sunTintM * pow(max(dot(mr, sunD), 0.0), AURELIA_METAL_SHINE) * sunUp * skyVis * (isEnd ? 0.0 : 1.0);
+
         lit = mix(lit, lit * (1.0 - AURELIA_METAL_DARKEN) + refl * AURELIA_METAL_REFLECT * fresM, metal);
       }
     #endif
@@ -165,6 +155,7 @@ void main() {
     #ifdef AURELIA_SUN_SPEC
       vec3 specN = dot(fn, vdir) > 0.0 ? -fn : fn;
       float specGate = skyVis * sunUp * (1.0 - aureliaRain) * (1.0 - smoothstep(0.6, 1.0, camDis / AURELIA_RELIEF_RANGE)) * (isEnd ? 0.0 : 1.0);
+
       if (specGate > 0.01) {
         aureliaSunRelief(lit, s_MatTexture, v_texcoord0, specN, dpx, dpy, dux, duy, vdir, aureliaSunDir(TimeOfDay.x), specGate, aureliaLuma(diffuse.rgb));
       }
