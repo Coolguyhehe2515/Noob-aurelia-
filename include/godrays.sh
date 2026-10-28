@@ -4,18 +4,7 @@
 #include <noise.sh>
 #include <env.sh>
 #include <clouds.sh>
-
-#define AURELIA_GODRAYS 1
-#define AURELIA_GODRAY_DAWN 1.0
-#define AURELIA_GODRAY_DUSK 0.7
-#define AURELIA_GODRAY_DAY 0.3
-#define AURELIA_GODRAY_INTENSITY 0.5
-#define AURELIA_GODRAY_FALLOFF 3.0
-#define AURELIA_GODRAY_STEPS 6
-#define AURELIA_GODRAY_SKY_SIGN -1.0
-#define AURELIA_UW_RAY_COLOR vec3(0.35, 0.75, 0.85)
-#define AURELIA_UW_RAY_INTENSITY 0.5
-#define AURELIA_UW_RAY_FREQ 5.0
+#include <config.sh>
 
 float aureliaRayPattern(vec3 dir, vec3 axis, highp float time, float freq) {
   vec3 up = abs(axis.y) < 0.95 ? vec3(0.0, 1.0, 0.0) : vec3(1.0, 0.0, 0.0);
