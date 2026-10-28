@@ -1,13 +1,7 @@
 #ifndef AURELIA_LIGHT_H
 #define AURELIA_LIGHT_H
 
-#define AURELIA_SUN_INTENSITY 1.0
-#define AURELIA_TORCH_COLOR vec3(1.0, 0.72, 0.38)
-#define AURELIA_TORCH_INTENSITY 0.15
-#define AURELIA_END_AMBIENT vec3(0.9, 0.78, 0.58)
-#define AURELIA_END_FOG vec3(0.26, 0.24, 0.17)
-#define AURELIA_ACTOR_RAIN_DARKEN 0.65
-#define AURELIA_ACTOR_RAIN_GRAY 0.4
+#include <config.sh>
 
 float aureliaLuma(vec3 c) {
   return dot(c, vec3(0.2126, 0.7152, 0.0722));
