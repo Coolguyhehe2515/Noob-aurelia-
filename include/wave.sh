@@ -1,11 +1,7 @@
 #ifndef AURELIA_WAVE_H
 #define AURELIA_WAVE_H
 
-#define AURELIA_WAVE_STRENGTH 0.07
-#define AURELIA_WAVE_SPEED 2.2
-#define AURELIA_WAVE_RANGE 48.0
-#define AURELIA_LEAF_STRENGTH 0.04
-#define AURELIA_LEAF_SPEED 1.4
+#include <config.sh>
 
 void aureliaWave(inout vec3 worldPos, vec4 color, vec3 cPos, vec2 uv0, float camDis, highp float time, sampler2D matTex, highp vec3 camPos) {
   vec3 bPos = fract(cPos);
