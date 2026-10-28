@@ -1,6 +1,7 @@
 #ifndef AURELIA_MAIN_H
 #define AURELIA_MAIN_H
 
+#include <config.sh>
 #include <tonemap.sh>
 #include <wave.sh>
 #include <noise.sh>
