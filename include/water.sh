@@ -3,12 +3,7 @@
 
 #include <sky.sh>
 #include <clouds.sh>
-
-#define AURELIA_WATER_SPEED 1.0
-#define AURELIA_WATER_ROUGHNESS 0.14
-#define AURELIA_WATER_REFLECT 1.3
-#define AURELIA_WATER_CLARITY 0.65
-#define AURELIA_WATER_GLINT 2.5
+#include <config.sh>
 
 vec2 aureliaWaveGrad(highp vec2 p, vec2 dir, float freq, float speed, float amp, highp float t) {
   return dir * (freq * amp * cos(dot(p, dir) * freq + t * speed));
