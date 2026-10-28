@@ -4,20 +4,8 @@
 #include <noise.sh>
 #include <tonemap.sh>
 #include <env.sh>
+#include <config.sh>
 
-#define AURELIA_CLOUD_ALTITUDE 140.0
-#define AURELIA_CLOUD_SCALE 0.008
-#define AURELIA_CLOUD_SPEED 6.0
-#define AURELIA_CLOUD_COVERAGE 0.42
-#define AURELIA_CLOUD_SOFTNESS 0.22
-#define AURELIA_CLOUD_DETAIL 0.1
-#define AURELIA_CLOUD_OPACITY 0.95
-#define AURELIA_CLOUD_SHADOW 2.2
-#define AURELIA_CLOUD_SILVER 1.2
-#define AURELIA_CLOUD_SHADE 0.55
-#define AURELIA_CLOUD_RAIN_GROW 0.32
-#define AURELIA_CLOUD_RAIN_SOFT 0.2
-#define AURELIA_CLOUD_RAIN_DARK 0.65
 
 vec3 aureliaSunDir(float timeOfDay) {
   float a = 6.2831853 * timeOfDay;
