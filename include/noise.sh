@@ -1,6 +1,8 @@
 #ifndef AURELIA_NOISE_H
 #define AURELIA_NOISE_H
 
+#include <config.sh>
+
 highp float aureliaHash(highp vec2 p) {
   highp vec3 p3 = fract(vec3(p.xyx) * 0.1031);
   p3 += dot(p3, p3.yzx + 33.33);
