@@ -4,21 +4,7 @@
 #include <noise.sh>
 #include <sky.sh>
 #include <clouds.sh>
-
-#define AURELIA_WET_DARKEN 0.3
-#define AURELIA_WET_SPEC 0.5
-#define AURELIA_PUDDLE_SCALE 0.22
-#define AURELIA_PUDDLE_EDGE 0.66
-#define AURELIA_PUDDLE_GROW 0.14
-#define AURELIA_PUDDLE_DARKEN 0.45
-#define AURELIA_PUDDLE_REFLECT 1.6
-#define AURELIA_RIPPLE_DENSITY 2.0
-#define AURELIA_RIPPLE_SPEED 0.9
-#define AURELIA_RIPPLE_AMP 0.35
-#define AURELIA_SPLASH_DENSITY 3.0
-#define AURELIA_SPLASH_SPEED 1.6
-#define AURELIA_SPLASH_STRENGTH 0.8
-#define AURELIA_SPLASH_AMOUNT 0.5
+#include <config.sh>
 
 float aureliaWetness(float rain) {
   return smoothstep(0.1, 0.8, rain);
