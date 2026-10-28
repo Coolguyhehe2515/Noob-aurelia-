@@ -3,9 +3,7 @@ $input v_color0
 #include <bgfx_shader.sh>
 #include <main.sh>
 
-#define AURELIA_CLOUD_TEXTURE 1
-
-#if AURELIA_CLOUD_TEXTURE
+#ifdef AURELIA_CLOUD_TEXTURE
   SAMPLER2D_AUTOREG(s_CloudNoise);
 #endif
 
@@ -22,13 +20,13 @@ void main() {
   vec3 sunDir = aureliaSunDir(TimeOfDay.x);
   vec3 horizonCol = aureliaSkyHorizon(vec3(0.45, 0.5, 0.56), sunDir);
 
-  #if AURELIA_CLOUD_TEXTURE
+  #ifdef AURELIA_CLOUD_TEXTURE
     vec4 c = aureliaCloudsRawTex(s_CloudNoise, dir, CameraPosition.xz, ViewPositionAndTime.w, sunDir, horizonCol, 1.0);
   #else
     vec4 c = aureliaCloudsRaw(dir, CameraPosition.xz, ViewPositionAndTime.w, sunDir, horizonCol, 1.0);
   #endif
 
-  #if AURELIA_GODRAYS
+  #ifdef AURELIA_GODRAYS
     c.rgb += aureliaGodrays(dir, sunDir, CameraPosition.xz, ViewPositionAndTime.w);
   #endif
 
