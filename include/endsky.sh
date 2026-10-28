@@ -2,12 +2,7 @@
 #define AURELIA_ENDSKY_H
 
 #include <tonemap.sh>
-
-#define AURELIA_END_BRIGHTNESS 1.0
-#define AURELIA_END_ROTATION 0.0
-#define AURELIA_END_YAW 0.0
-#define AURELIA_END_FLIP_V 0
-#define AURELIA_END_GRADE 1
+#include <config.sh>
 
 vec3 aureliaEndSky(sampler2D tex, vec3 dir) {
   highp float yaw = atan(dir.z, dir.x) * 0.15915494 + 0.5 + AURELIA_END_YAW;
