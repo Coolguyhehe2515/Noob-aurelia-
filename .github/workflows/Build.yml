@@ -22,7 +22,7 @@ jobs:
           python mark_metal.py
       - name: Vanilla materials
         run: |
-          curl -fL -o mats.zip https://github.com/devendrn/newb-shader/releases/download/dev/src-materials-1.26.51.zip
+          curl -fL -o mats.zip https://github.com/Coolguyhehe2515/Noob-aurelia-/releases/download/26.60_support/src-materials-26.60.zip
           mkdir -p vanilla tmp
           unzip -q mats.zip -d tmp
           find tmp -name '*.material.json' -exec mv {} vanilla/ \;
