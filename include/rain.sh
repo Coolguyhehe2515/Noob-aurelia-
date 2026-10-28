@@ -2,21 +2,7 @@
 #define AURELIA_RAIN_H
 
 #include <clouds.sh>
-
-#define AURELIA_RAIN_WIDTH 0.5
-#define AURELIA_RAIN_LENGTH 1.25
-#define AURELIA_RAIN_OPACITY 0.65
-#define AURELIA_RAIN_EDGE_LOW 0.1
-#define AURELIA_RAIN_EDGE_HIGH 0.6
-#define AURELIA_RAIN_COLOR vec3(0.72, 0.73, 0.77)
-#define AURELIA_RAIN_COLOR_MIX 0.85
-#define AURELIA_RAIN_AMOUNT 1.0
-#define AURELIA_SNOW_AMOUNT 1.0
-
-#define AURELIA_WIND_BASE 0.12
-#define AURELIA_WIND_GUST 0.35
-#define AURELIA_WIND_TURN 1.2
-#define AURELIA_WIND_SIGN 1.0
+#include <config.sh>
 
 float aureliaRainMask(highp vec2 absXZ, highp float time) {
   highp vec2 p = (absXZ + vec2(1.0, 0.4) * time * AURELIA_CLOUD_SPEED) * AURELIA_CLOUD_SCALE;
