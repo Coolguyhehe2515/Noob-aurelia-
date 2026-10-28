@@ -2,13 +2,8 @@
 #define AURELIA_SUNMOON_H
 
 #include <tonemap.sh>
+#include <config.sh>
 
-#define AURELIA_SUN_SIZE 1.0
-#define AURELIA_SUN_DISC 0.07
-#define AURELIA_SUN_GLOW 1.0
-#define AURELIA_SUN_FALLOFF 7.0
-#define AURELIA_MOON_SIZE 1.0
-#define AURELIA_MOON_BRIGHTNESS 1.0
 
 vec4 aureliaSunDisc(vec2 uv, float sunY) {
   float d = length(uv - 0.5) * 2.0;
