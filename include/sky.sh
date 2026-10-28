@@ -2,28 +2,8 @@
 #define AURELIA_SKY_H
 
 #include <env.sh>
+#include <config.sh>
 
-#define AURELIA_SKY_DAY_HORIZON vec3(0.72, 0.84, 0.96)
-#define AURELIA_SKY_DAY_EDGE vec3(0.46, 0.66, 0.92)
-#define AURELIA_SKY_DAY_ZENITH vec3(0.20, 0.42, 0.82)
-
-#define AURELIA_SKY_DAWN_HORIZON vec3(0.84, 0.68, 0.52)
-#define AURELIA_SKY_DAWN_EDGE vec3(0.80, 0.70, 0.62)
-#define AURELIA_SKY_DAWN_ZENITH vec3(0.71, 0.64, 0.64)
-
-#define AURELIA_SKY_DUSK_HORIZON vec3(1.00, 0.50, 0.30)
-#define AURELIA_SKY_DUSK_EDGE vec3(0.72, 0.42, 0.58)
-#define AURELIA_SKY_DUSK_ZENITH vec3(0.28, 0.30, 0.58)
-
-#define AURELIA_SKY_NIGHT_HORIZON vec3(0.05, 0.07, 0.15)
-#define AURELIA_SKY_NIGHT_EDGE vec3(0.03, 0.045, 0.11)
-#define AURELIA_SKY_NIGHT_ZENITH vec3(0.01, 0.02, 0.07)
-
-#define AURELIA_SKY_EDGE_POS 0.2
-#define AURELIA_SKY_CURVE 0.5
-#define AURELIA_SKY_HORIZON_BAND 0.12
-#define AURELIA_SKY_SUNGLOW 0.35
-#define AURELIA_SKY_RAIN_BLEND 0.8
 
 vec3 aureliaSkyHorizon(vec3 engineFog, vec3 sunDir) {
   float day = smoothstep(0.05, 0.35, sunDir.y);
