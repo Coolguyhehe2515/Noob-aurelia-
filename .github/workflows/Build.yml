@@ -10,7 +10,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: pip install lazurite==0.10.0
+      - run: pip install lazurite==0.11.0
       - name: Shaderc
         run: |
           mkdir -p tools
