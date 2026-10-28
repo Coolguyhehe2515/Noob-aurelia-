@@ -1,6 +1,8 @@
 #ifndef AURELIA_ENV_H
 #define AURELIA_ENV_H
 
+#include <config.sh>
+
 float aureliaRain = 0.0;
 
 float aureliaRainFactor(vec3 fogControl) {
