@@ -4,10 +4,10 @@
 #define AURELIA_EXPOSURE 1.1
 #define AURELIA_SATURATION 1.3
 #define UCH_MAX 1.0
-#define UCH_CONTRAST 1.0
+#define UCH_CONTRAST 1.2
 #define UCH_LINEAR_START 0.22
 #define UCH_LINEAR_LEN 0.4
-#define UCH_BLACK 1.0
+#define UCH_BLACK 1.5
 #define UCH_PEDESTAL 0.0
 
 #define AURELIA_SKY_DAY_HORIZON vec3(0.72, 0.84, 0.96)
