@@ -63,8 +63,8 @@ void main() {
     vec4 fogColor;
     bool underwater = aureliaUnderwater(FogColor.rgb, FogAndDistanceControl.xyz);
     bool otherDim = aureliaIsNether(FogColor.rgb, FogAndDistanceControl.xy) || aureliaIsEnd(FogColor.rgb);
-    fogColor.rgb = (!otherDim && !underwater) ? aureliaSkyHorizon(FogColor.rgb, aureliaSunDir(TimeOfDay.x)) : FogColor.rgb;
-    fogColor.a = clamp((relativeDist - FogAndDistanceControl.x) / (FogAndDistanceControl.y - FogAndDistanceControl.x), 0.0, 1.0);
+    fogColor.rgb = underwater ? aureliaUnderwaterFog(FogColor.rgb) : ((!otherDim) ? aureliaSkyHorizon(FogColor.rgb, aureliaSunDir(TimeOfDay.x)) : FogColor.rgb);
+    fogColor.a = clamp(((underwater ? relativeDist * AURELIA_UW_FOG_DENSITY : relativeDist) - FogAndDistanceControl.x) / (FogAndDistanceControl.y - FogAndDistanceControl.x), 0.0, 1.0);
 
     v_color0 = color;
     v_color1 = a_color0;
