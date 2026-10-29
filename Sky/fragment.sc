@@ -34,6 +34,10 @@ void main() {
       #endif
     }
 
+      if (aureliaUnderwater(FogColor.rgb, FogAndDistanceControl.xyz)) {
+      sky *= AURELIA_UW_BRIGHTNESS;
+    }
+
     gl_FragColor = vec4(aureliaColorGrade(sky), 1.0);
   #else
     gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0);
