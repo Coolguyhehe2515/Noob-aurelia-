@@ -14,6 +14,7 @@ uniform vec4 OverlayColor;
 uniform vec4 TileLightColor;
 uniform vec4 FogColor;
 uniform vec4 FogControl;
+uniform vec4 TimeOfDay;
 uniform vec4 UVAnimation;
 uniform mat4 Bones[8];
 
@@ -40,7 +41,9 @@ void main() {
 
     vec4 fogColor;
     bool uw = aureliaUnderwater(FogColor.rgb, FogControl.xyz);
+    float uwB = uw ? AURELIA_UW_BRIGHTNESS : 1.0;
     fogColor.rgb = aureliaIsEnd(FogColor.rgb) ? AURELIA_END_FOG : (uw ? aureliaUnderwaterFog(FogColor.rgb) : FogColor.rgb);
+    fogColor.rgb *= uwB;
     fogColor.a = clamp(((uw ? relativeDist * AURELIA_UW_FOG_DENSITY : relativeDist) - FogControl.x) / (FogControl.y - FogControl.x), 0.0, 1.0);
 
     float lightIntensity = calculateLightIntensity(World, vec4(a_normal.xyz, 0.0), TileLightColor);
@@ -53,6 +56,12 @@ void main() {
     if (aureliaIsEnd(FogColor.rgb)) {
       tileLight = AURELIA_END_AMBIENT * (aureliaLuma(tileLight) / aureliaLuma(AURELIA_END_AMBIENT));
     }
+    float sunUp = smoothstep(-0.1, 0.2, aureliaSunDir(TimeOfDay.x).y);
+    float skyShare = smoothstep(0.5, 1.0, aureliaLuma(tileLight));
+    tileLight *= mix(1.0, AURELIA_SUN_INTENSITY, skyShare * sunUp);
+    float warm = clamp((tileLight.r - tileLight.b) * 3.0, 0.0, 1.0);
+    tileLight = mix(tileLight, tileLight * (AURELIA_TORCH_COLOR / aureliaLuma(AURELIA_TORCH_COLOR)), warm * AURELIA_ACTOR_TORCH_TINT);
+    tileLight *= AURELIA_ACTOR_BRIGHTNESS * uwB;
     aureliaRain = aureliaRainFactor(FogControl.xyz);
     tileLight = mix(tileLight, vec3_splat(aureliaLuma(tileLight)), aureliaRain * AURELIA_ACTOR_RAIN_GRAY);
     tileLight *= 1.0 - AURELIA_ACTOR_RAIN_DARKEN * aureliaRain;
