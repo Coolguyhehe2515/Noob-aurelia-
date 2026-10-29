@@ -17,4 +17,8 @@ bool aureliaUnderwater(vec3 fogColor, vec3 fogControl) {
   return fogControl.x == 0.0 && fogControl.y < 0.8 && (fogColor.b > fogColor.r || fogColor.g > fogColor.r);
 }
 
+vec3 aureliaUnderwaterFog(vec3 fogColor) {
+  return mix(fogColor, AURELIA_UW_FOG_COLOR, AURELIA_UW_FOG_TINT);
+}
+
 #endif
