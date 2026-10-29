@@ -23,7 +23,7 @@ void main() {
     vec3 sky = aureliaSkyColor(dir, FogColor.rgb, sunDir);
 
     if (aureliaUnderwater(FogColor.rgb, FogAndDistanceControl.xyz)) {
-      sky = FogColor.rgb;
+      sky = aureliaUnderwaterFog(FogColor.rgb);
 
       #ifdef AURELIA_GODRAYS
         sky += aureliaUnderwaterRays(dir, sunDir, ViewPositionAndTime.w, 80.0);
