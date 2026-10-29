@@ -39,8 +39,9 @@ void main() {
     float relativeDist = position.z / FogControl.z;
 
     vec4 fogColor;
-    fogColor.rgb = aureliaIsEnd(FogColor.rgb) ? AURELIA_END_FOG : FogColor.rgb;
-    fogColor.a = clamp((relativeDist - FogControl.x) / (FogControl.y - FogControl.x), 0.0, 1.0);
+    bool uw = aureliaUnderwater(FogColor.rgb, FogControl.xyz);
+    fogColor.rgb = aureliaIsEnd(FogColor.rgb) ? AURELIA_END_FOG : (uw ? aureliaUnderwaterFog(FogColor.rgb) : FogColor.rgb);
+    fogColor.a = clamp(((uw ? relativeDist * AURELIA_UW_FOG_DENSITY : relativeDist) - FogControl.x) / (FogControl.y - FogControl.x), 0.0, 1.0);
 
     float lightIntensity = calculateLightIntensity(World, vec4(a_normal.xyz, 0.0), TileLightColor);
     lightIntensity += OverlayColor.a * 0.35;
