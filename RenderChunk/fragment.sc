@@ -88,7 +88,6 @@ void main() {
 
   vec2 screenuv = gl_FragCoord.xy / max(u_viewRect.zw, vec2_splat(1.0));
   float dist = distance(screenuv, vec2_splat(0.5));
-  float dist = distance(screenuv, vec2(0.5));
   float vignette = pow(1.0 - smoothstep(0.25, 0.8, dist), 1.8);
   lit *= mix(1.0, vignette, shadow * AURELIA_VIGNETTE_STRENGTH);
 
