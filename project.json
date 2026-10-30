@@ -9,7 +9,7 @@
   "profiles": {
     "android": {
       "macros": [],
-      "platforms": ["ESSL_300"]
+      "platforms": ["ESSL_300", "ESSL_320"]
     },
     "ios": {
       "macros": [],
