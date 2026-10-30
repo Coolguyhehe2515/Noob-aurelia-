@@ -2,20 +2,39 @@ name: build
 on:
   push:
   workflow_dispatch:
+    inputs:
+      target:
+        type: choice
+        description: Build target
+        default: android
+        options:
+          - android
+          - ios
+          - multiplatform
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ${{ (inputs.target == 'ios' && 'macos-latest') || (inputs.target == 'multiplatform' && 'windows-latest') || 'ubuntu-latest' }}
+    env:
+      TARGET: ${{ inputs.target || 'android' }}
+    defaults:
+      run:
+        shell: bash
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: pip install lazurite==0.12.0
+      - run: pip install lazurite==0.11.0
       - name: Shaderc
         run: |
           mkdir -p tools
-          curl -fL -o tools/shaderc https://github.com/devendrn/newb-shader/releases/download/dev/shaderc-linux-x64
-          chmod +x tools/shaderc
+          if [ "$TARGET" = "ios" ]; then ASSET=shaderc-macos-arm64; EXT=""; fi
+          if [ "$TARGET" = "multiplatform" ]; then ASSET=shaderc-windows-x64.exe; EXT=".exe"; fi
+          if [ "$TARGET" = "android" ]; then ASSET=shaderc-linux-x64; EXT=""; fi
+          curl -fL -o "tools/shaderc$EXT" "https://github.com/devendrn/newb-shader/releases/download/dev/$ASSET"
+          chmod +x "tools/shaderc$EXT"
+          echo "SHADERC_PATH=tools/shaderc$EXT" >> "$GITHUB_ENV"
+          echo "PROFILE=$TARGET" >> "$GITHUB_ENV"
       - name: Mark metal textures
         run: |
           pip install pillow
@@ -23,13 +42,11 @@ jobs:
       - name: Vanilla materials
         run: |
           curl -fL -o mats.zip https://github.com/Coolguyhehe2515/Noob-aurelia-/releases/download/26.60_support/src-materials-26.60.zip
-          mkdir -p vanilla tmp
-          unzip -q mats.zip -d tmp
-          find tmp -name '*.material.json' -exec mv {} vanilla/ \;
+          python -c "import zipfile,os,shutil; os.makedirs('vanilla',exist_ok=True); z=zipfile.ZipFile('mats.zip'); [open(os.path.join('vanilla',os.path.basename(n)),'wb').write(z.read(n)) for n in z.namelist() if n.endswith('.material.json')]"
           ls vanilla
       - run: python build.py
       - run: ls pack/renderer/materials
       - uses: actions/upload-artifact@v4
         with:
-          name: noob-aurelia
+          name: noob-aurelia-${{ env.TARGET }}
           path: pack/
