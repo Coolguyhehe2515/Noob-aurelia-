@@ -69,7 +69,7 @@ os.makedirs(out, exist_ok=True)
 
 lp.compile(
     project_path=stage,
-    profiles=['android'],
+    profiles=[os.environ.get('PROFILE', 'android')],
     output_folder=out,
     material_patterns=[],
     shaderc_path=os.path.abspath(os.path.join('tools', 'shaderc')),
