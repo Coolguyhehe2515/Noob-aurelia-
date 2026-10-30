@@ -72,6 +72,6 @@ lp.compile(
     profiles=[os.environ.get('PROFILE', 'android')],
     output_folder=out,
     material_patterns=[],
-    shaderc_path=os.path.abspath(os.path.join('tools', 'shaderc')),
+    shaderc_path=os.path.abspath(os.environ.get('SHADERC_PATH', os.path.join('tools', 'shaderc'))),
     defines=[]
 )
