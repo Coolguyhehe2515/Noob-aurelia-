@@ -1,6 +1,6 @@
 {
   "base_profile": {
-    "platforms": ["ESSL_300"],
+    "platforms": ["ESSL_300", "ESSL_320"],
     "merge_source": ["vanilla"],
     "include_patterns": ["RenderChunk", "Sky", "Clouds", "Weather", "EndSky", "Stars", "Actor", "SunMoon"],
     "exclude_patterns": [".*", "_*"],
@@ -9,7 +9,7 @@
   "profiles": {
     "android": {
       "macros": [],
-      "platforms": ["ESSL_300"]
+      "platforms": ["ESSL_300", "ESSL_320"]
     }
   }
 }
