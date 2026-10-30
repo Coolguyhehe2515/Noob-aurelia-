@@ -28,8 +28,8 @@ jobs:
       - name: Shaderc
         run: |
           mkdir -p tools
-          if [ "$TARGET" = "ios" ]; then ASSET=shaderc-macos-arm64; EXT=""; fi
-          if [ "$TARGET" = "multiplatform" ]; then ASSET=shaderc-windows-x64.exe; EXT=".exe"; fi
+          if [ "$TARGET" = "ios" ]; then ASSET=shaderc-osx-x64; EXT=""; fi
+          if [ "$TARGET" = "multiplatform" ]; then ASSET=shaderc-win-x64.exe; EXT=".exe"; fi
           if [ "$TARGET" = "android" ]; then ASSET=shaderc-linux-x64; EXT=""; fi
           curl -fL -o "tools/shaderc$EXT" "https://github.com/devendrn/newb-shader/releases/download/dev/$ASSET"
           chmod +x "tools/shaderc$EXT"
