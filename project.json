@@ -9,7 +9,19 @@
   "profiles": {
     "android": {
       "macros": [],
-      "platforms": ["ESSL_300", "ESSL_320"]
+      "platforms": ["ESSL_300"]
+    },
+    "ios": {
+      "macros": [],
+      "platforms": ["Metal"]
+    },
+    "windows": {
+      "macros": [],
+      "platforms": ["Direct3D_SM40", "Direct3D_SM50"]
+    },
+    "multiplatform": {
+      "macros": [],
+      "platforms": ["ESSL_300", "ESSL_320", "Metal", "Direct3D_SM40", "Direct3D_SM50"]
     }
   }
 }
