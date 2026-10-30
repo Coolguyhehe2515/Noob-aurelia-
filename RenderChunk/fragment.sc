@@ -86,7 +86,8 @@ void main() {
   vec3 lit = diffuse.rgb * shaded * lightCol;
   lit *= mix(vec3_splat(1.0), AURELIA_SHADE_COLOR, shadow);
 
-  vec2 screenuv = gl_FragCoord.xy / max(u_viewRect.zw, vec2(1.0));
+  vec2 screenuv = gl_FragCoord.xy / max(u_viewRect.zw, vec2_splat(1.0));
+  float dist = distance(screenuv, vec2_splat(0.5));
   float dist = distance(screenuv, vec2(0.5));
   float vignette = pow(1.0 - smoothstep(0.25, 0.8, dist), 1.8);
   lit *= mix(1.0, vignette, shadow * AURELIA_VIGNETTE_STRENGTH);
