@@ -63,7 +63,7 @@ void main() {
   #ifdef OPAQUE
     float alpha255 = diffuse.a * 255.0;
     emissive = clamp((255.0 - alpha255) / 3.0, 0.0, 1.0) * step(249.0, alpha255);
-    metal = clamp((250.0 - alpha255) / 10.0, 0.0, 1.0);
+    metal = smoothstep(225.0, 235.0, alpha255) * (1.0 - smoothstep(241.0, 250.0, alpha255));
   #endif
 
   #if defined(SEASONS) && (defined(OPAQUE) || defined(ALPHA_TEST))
